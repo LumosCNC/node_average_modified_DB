@@ -1,0 +1,365 @@
+[
+    {
+        "id": "4e50b386fb26d217",
+        "type": "inject",
+        "z": "4f649206d15b2bb5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Autoencoder",
+        "payload": "2.5",
+        "payloadType": "num",
+        "x": 130,
+        "y": 2500,
+        "wires": [
+            [
+                "add0f82798efb53b"
+            ]
+        ]
+    },
+    {
+        "id": "a673079f3261a666",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 30",
+        "func": "msg.complete = true;\nmsg.container = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 2500,
+        "wires": [
+            [
+                "4f1cf086c61d9eda"
+            ]
+        ]
+    },
+    {
+        "id": "1a9dfafe279b3e15",
+        "type": "ui_template",
+        "z": "4f649206d15b2bb5",
+        "group": "40e2ec2d.152c74",
+        "name": "",
+        "order": 31,
+        "width": "19",
+        "height": "8",
+        "format": "<div ng-bind-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1140,
+        "y": 2500,
+        "wires": [
+            [
+                "fc9863e767a51496"
+            ]
+        ]
+    },
+    {
+        "id": "473117956aad87a2",
+        "type": "mysql",
+        "z": "4f649206d15b2bb5",
+        "mydb": "9a936c83fadc909d",
+        "name": "",
+        "x": 1440,
+        "y": 2500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fc9863e767a51496",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 31",
+        "func": "var data_avg = msg.payload.average;\n//var data_num = msg.payload.number;\n//var data_bar = msg.payload.bar;\n//var value = []\n//for (let i = 0; i < data_avg.length; i++) {\n//value.push([data_avg[i],data_num[i]])\n//}\nmsg.topic = `INSERT INTO bar_data(idbar_avg) VALUES(\"${data_avg.toString()}\");`\n//msg.topic = `INSERT INTO bar_data(idbar_avg,idbar_num,idbar_bar) VALUES(\"${data_avg.toString()}\",\"${data_num.toString()}\",\"${data_bar.toString()}\" );`\n\nnode.warn(msg.topic);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1290,
+        "y": 2500,
+        "wires": [
+            [
+                "473117956aad87a2"
+            ]
+        ]
+    },
+    {
+        "id": "e493e72ccdc8f943",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 33",
+        "func": "var date = new Date();\nvar previousMonth = date.getMonth();\nvar previousYear = date.getFullYear();\nif (previousMonth == 0) {\n    previousMonth = 12;\n    previousYear = previousYear - 1;\n}\nvar date1 = new Date(date.getFullYear(), previousMonth, 0);\n\nvar num_data = date1.getDate();\nglobal.set(\"num_data\",num_data)\n//node.warn(\"your_variable=\" + num_data);\n\n\nmsg.topic = 'SELECT * FROM bar_data ORDER BY id DESC LIMIT 1;'\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 250,
+        "y": 2540,
+        "wires": [
+            [
+                "034999b60dd9a843"
+            ]
+        ]
+    },
+    {
+        "id": "034999b60dd9a843",
+        "type": "mysql",
+        "z": "4f649206d15b2bb5",
+        "mydb": "9a936c83fadc909d",
+        "name": "",
+        "x": 400,
+        "y": 2540,
+        "wires": [
+            [
+                "ac33aaa09c91cb86"
+            ]
+        ]
+    },
+    {
+        "id": "d9f8f01c9bdcffa0",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 34",
+        "func": "var data = []\nfor (let i = 0; i < global.get(\"num_data\"); i++) {\n    data.push(0);\n}\n\nlet text = data.toString();\n\nmsg.topic = `INSERT INTO bar_data(idbar_avg,idbar_num,idbar_bar) VALUES(\"${text}\",\"${text}\",\"${text}\");`\n//msg.topic = `update bar_data SET idbar_avg='${text}' WHERE id > 0 ;`\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 2580,
+        "wires": [
+            [
+                "d20f6baa3edad560"
+            ]
+        ]
+    },
+    {
+        "id": "d20f6baa3edad560",
+        "type": "mysql",
+        "z": "4f649206d15b2bb5",
+        "mydb": "9a936c83fadc909d",
+        "name": "",
+        "x": 420,
+        "y": 2580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eb07b946400e4fdb",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 36",
+        "func": "try {\n    var avg_arr = [];\n    var num_arr = [];\n    var bar_arr = [];\n\n    node.warn(msg.container.data[0].idbar_avg.split(','));\n\n    for (let i = 0; i < msg.container.data[0].idbar_avg.length; i++) {\n        avg_arr.push(parseInt(msg.container.data[0].idbar_avg.split(',')[i]));\n        num_arr.push(parseInt(msg.container.data[0].idbar_num.split(',')[i]));\n        bar_arr.push(parseInt(msg.container.data[0].idbar_bar.split(',')[i]));\n    }\n\n    node.warn(avg_arr);\n\n    msg.avg_arr = avg_arr;\n    //msg.num_arr = num_arr;\n    //msg.bar_arr = bar_arr;\n} catch (ex) {\n    node.warn(\"No database input...\");\n} finally {\n    node.warn(\"Processed...\");\n}\n\nmsg.payload = msg.container.Autoencoder\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 2500,
+        "wires": [
+            [
+                "619c9f4cdf71b339",
+                "68c1558dbafc950c"
+            ]
+        ]
+    },
+    {
+        "id": "4f1cf086c61d9eda",
+        "type": "join",
+        "z": "4f649206d15b2bb5",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "container",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 690,
+        "y": 2500,
+        "wires": [
+            [
+                "eb07b946400e4fdb"
+            ]
+        ]
+    },
+    {
+        "id": "ac33aaa09c91cb86",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 37",
+        "func": "\nmsg.topic = \"data\"\nmsg.container = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 2540,
+        "wires": [
+            [
+                "4f1cf086c61d9eda"
+            ]
+        ]
+    },
+    {
+        "id": "fcc9544859f98fdc",
+        "type": "inject",
+        "z": "4f649206d15b2bb5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 2540,
+        "wires": [
+            [
+                "e493e72ccdc8f943"
+            ]
+        ]
+    },
+    {
+        "id": "add0f82798efb53b",
+        "type": "function",
+        "z": "4f649206d15b2bb5",
+        "name": "function 38",
+        "func": "msg.payload = Math.round(Math.random() * 100);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 2500,
+        "wires": [
+            [
+                "a673079f3261a666"
+            ]
+        ]
+    },
+    {
+        "id": "619c9f4cdf71b339",
+        "type": "average-bars",
+        "z": "4f649206d15b2bb5",
+        "name": "average-bars",
+        "title": "",
+        "period": "hour",
+        "yMin": "auto",
+        "yMax": "auto",
+        "showBarsValue": true,
+        "showScaleValue": true,
+        "showLastValue": true,
+        "showAverageValue": true,
+        "showMinimumValue": true,
+        "showMaximumValue": true,
+        "maxBar": "5",
+        "topColor": "#ff0000",
+        "bottomColor": "#0400ff",
+        "unit": "",
+        "fontColor": "#aaaaaa",
+        "barStyle": "Rectangle",
+        "decimal": 1,
+        "x": 990,
+        "y": 2500,
+        "wires": [
+            [
+                "1a9dfafe279b3e15"
+            ]
+        ]
+    },
+    {
+        "id": "8f0632ec85e3c81b",
+        "type": "comment",
+        "z": "4f649206d15b2bb5",
+        "name": "Data trend chart with database",
+        "info": "",
+        "x": 150,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "68c1558dbafc950c",
+        "type": "debug",
+        "z": "4f649206d15b2bb5",
+        "name": "debug 47",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 2580,
+        "wires": []
+    },
+    {
+        "id": "40e2ec2d.152c74",
+        "type": "ui_group",
+        "name": "testing4",
+        "tab": "8e4884bb.ff1388",
+        "order": 1,
+        "disp": true,
+        "width": "19",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9a936c83fadc909d",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "bar_char",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "8e4884bb.ff1388",
+        "type": "ui_tab",
+        "name": "testing3",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
